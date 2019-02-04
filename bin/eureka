@@ -1,34 +1,37 @@
 #!/usr/bin/env node
 
 const program = require('commander');
-const chalk = require('chalk');
 const api = require('../');
 
-// // Chalk docs: https://www.npmjs.com/package/chalk
-// const error = chalk.bold.red;
-// const warning = chalk.keyword('orange');
-// const info = chalk.cyan;
-// const log = {
-//     info () {
-//         let mapped = Object.keys(arguments).map((arg) => { return info(arguments[arg]) });
-//         console.log.apply(this, mapped);
-//     },
-//     warn () { 
-//         let mapped = Object.keys(arguments).map((arg) => { return warning(arguments[arg]) });
-//         console.log.apply(this, mapped);
-//     },
-//     error () { 
-//         let mapped = Object.keys(arguments).map((arg) => { return error(arguments[arg]) });
-//         console.log.apply(this, mapped);
-//     }
-// }
+// add example to help
+program.on('--help', function(){
+    api.log.info('');
+    api.log.info('Examples:');
+    api.log.info('  $ eureka tunnel my-space -j myjumpserve.com -e eureka.myhost.com -ep 8761 -lp 1234 -p key.pem');
+    api.log.info('  $ eureka ls');
+});
 
-// program
-//     .arguments('<cmd> [env]')
-//     .action(function (cmd, env) {
-//         cmdValue = cmd;
-//         envValue = env;
-//     });
+// handle unknown commands
+program.on('command:*', function () {
+    api.log.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
+});
+
+program
+    .command('ls')
+    .action(() => {
+        api.log.info('eureka ls');
+        api.eureka.apps()
+            // .then((data) => {
+            //     // api.log.info('data', JSON.stringify(data));
+            // })
+            .then(res => res.text())
+            .then(json => console.log('JSON', json))
+            .catch((err) => {
+                console.log(err);
+                api.log.error('FAILED', err);
+            });
+    });
 
 program
     .command('tunnel')
@@ -69,20 +72,6 @@ program
             api.tunnel.closeTunnel();
         })
     });
-
-// add example to help
-program.on('--help', function(){
-    api.log.info('');
-    api.log.info('Examples:');
-    api.log.info('  $ eureka tunnel my-space -j myjumpserve.com -e eureka.myhost.com -ep 8761 -lp 1234 -p key.pem');
-    api.log.info('  $ eureka ls');
-});
-
-// handle unknown commands
-program.on('command:*', function () {
-    api.log.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
-    process.exit(1);
-});
 
 program
     .parse(process.argv);

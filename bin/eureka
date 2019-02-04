@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+const args = require('minimist')(process.argv.slice(2));
+
+console.log('parsed args', args);
+
+const api = require('../');
+
+api.tunnel.openTunnel(args.jumpServer, args.eurekaServer, args.localPort, args.eurekaPort, args.pemFile);
+
+process.on('exit', (code) => {
+    console.log('Exiting...', code);
+    api.tunnel.closeTunnel();
+})

@@ -1,5 +1,6 @@
 
 
 module.exports = {
-    tunnel: require('./tunnel')
+    tunnel: require('./tunnel'),
+    log: require('./log')
 }

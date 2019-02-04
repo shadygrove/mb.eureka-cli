@@ -1,14 +1,88 @@
 #!/usr/bin/env node
 
-const args = require('minimist')(process.argv.slice(2));
-
-console.log('parsed args', args);
-
+const program = require('commander');
+const chalk = require('chalk');
 const api = require('../');
 
-api.tunnel.openTunnel(args.jumpServer, args.eurekaServer, args.localPort, args.eurekaPort, args.pemFile);
+// // Chalk docs: https://www.npmjs.com/package/chalk
+// const error = chalk.bold.red;
+// const warning = chalk.keyword('orange');
+// const info = chalk.cyan;
+// const log = {
+//     info () {
+//         let mapped = Object.keys(arguments).map((arg) => { return info(arguments[arg]) });
+//         console.log.apply(this, mapped);
+//     },
+//     warn () { 
+//         let mapped = Object.keys(arguments).map((arg) => { return warning(arguments[arg]) });
+//         console.log.apply(this, mapped);
+//     },
+//     error () { 
+//         let mapped = Object.keys(arguments).map((arg) => { return error(arguments[arg]) });
+//         console.log.apply(this, mapped);
+//     }
+// }
 
-process.on('exit', (code) => {
-    console.log('Exiting...', code);
-    api.tunnel.closeTunnel();
-})
+// program
+//     .arguments('<cmd> [env]')
+//     .action(function (cmd, env) {
+//         cmdValue = cmd;
+//         envValue = env;
+//     });
+
+program
+    .command('tunnel')
+    .description('Tunnel to a eureka instance')
+    .option('-j, --jumpServer <jumpServer>', 'Jump server host/ip')
+    .option('-e, --eurekaServer <eurekaServer>', 'Eureka server host/ip')
+    .option('-ep, --eurekaPort <eurekaPort>', 'Eureka port')
+    .option('-lp, --localPort <localPort>', 'Local port to forward')
+    .option('-p, --pemFile <pemFile>', '.pem file location')
+    .on('--help', function(){
+        api.log.info('');
+        api.log.info('Examples:');
+        api.log.info('  $ eureka tunnel my-space -j myjumpserve.com -e eureka.myhost.com -ep 8761 -lp 1234 -p key.pem');
+    })
+    .action((options, cmd) => {
+        if (!options.jumpServer
+            && !options.eurekaServer
+            && !options.eurekaPort
+            && !options.localPort
+            && !options.pemFile) {
+                api.log.warn('all options required');
+                cmd.outputHelp()
+                return;
+            }
+        
+        api.log.info('Opening tunnel...');
+
+        api.tunnel.openTunnel(
+            options.jumpServer, 
+            options.eurekaServer, 
+            options.localPort, 
+            options.eurekaPort, 
+            options.pemFile
+        );
+
+        process.on('exit', (code) => {
+            api.log.warn('Exiting...', code);
+            api.tunnel.closeTunnel();
+        })
+    });
+
+// add example to help
+program.on('--help', function(){
+    api.log.info('');
+    api.log.info('Examples:');
+    api.log.info('  $ eureka tunnel my-space -j myjumpserve.com -e eureka.myhost.com -ep 8761 -lp 1234 -p key.pem');
+    api.log.info('  $ eureka ls');
+});
+
+// handle unknown commands
+program.on('command:*', function () {
+    api.log.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+    process.exit(1);
+});
+
+program
+    .parse(process.argv);

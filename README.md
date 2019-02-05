@@ -9,8 +9,9 @@ Resources:
 
 ## Usage
 ```
-export EUREKA_SERVER=protocol.and.host.com
 npm install -g mb.eureka-cli
+
+export EUREKA_SERVER=protocol.and.host.com
 
 eureka --help
 

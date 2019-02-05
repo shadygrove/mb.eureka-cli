@@ -3,6 +3,10 @@
 const program = require('commander');
 const api = require('../');
 
+function stringify (obj) {
+    return JSON.stringify(obj, null, 4);
+}
+
 // add example to help
 program.on('--help', function(){
     api.log.info('');
@@ -18,18 +22,48 @@ program.on('command:*', function () {
 });
 
 program
-    .command('ls')
-    .action(() => {
-        api.log.info('eureka ls');
+    .command('apps')
+    .description('List app names')
+    .option('-l, --log-level <logLevel>', 'low (default), medium, high')
+    .action((options) => {
+        api.log.info('options', options.logLevel);
+
         api.eureka.apps()
-            // .then((data) => {
-            //     // api.log.info('data', JSON.stringify(data));
-            // })
-            .then(res => res.text())
-            .then(json => console.log('JSON', json))
+            .then((res) => { 
+                if (options.verbose) {
+                    api.log.log(stringify(res));
+                }
+
+                let result = res.applications.application;
+
+                switch (options.logLevel) {
+                    case "medium": 
+                        result = result.map(app => {
+                            const { name } = app;
+                            const medResult = { name };
+                            medResult.instances = app.instance.map((i) => { 
+                                    const { instanceId, hostName } = i;
+                                    return { instanceId, hostName };
+                                });
+                            
+                            return medResult;
+
+                        });
+                        break;
+                    case "high":
+                        result = result.map((app) => app);
+                        break;
+                    case "low":
+                    default:
+                        result = result.forEach(app => { api.log.log(app.name) });
+                        break;
+                }
+
+                api.log.log(stringify(result));
+                
+            })
             .catch((err) => {
-                console.log(err);
-                api.log.error('FAILED', err);
+                api.log.error(err);
             });
     });
 

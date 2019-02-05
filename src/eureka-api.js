@@ -8,15 +8,17 @@ const conf = {
 }
 
 class EurekaAPI {
-    apps () {
+    apps (options) {
         log.info('EurekaAPI: ls');
 
         const path = '/apps';
         const apiUrl = new url.URL(conf.host + path);
 
         return fetch(apiUrl, {
-            headers: { 'Content-Type': 'application/json' },
-        });
+                headers: { 'Accept': 'application/json' },
+            })
+            .then(res => res.json())
+            .then(body => (body));
     }
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "eureka-cli",
+  "name": "mb.eureka-cli",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",

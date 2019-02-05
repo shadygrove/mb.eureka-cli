@@ -3,16 +3,18 @@ const log = require('./log');
 const fetch = require('node-fetch');
 const url = require('url');
 
-const conf = {
-    host: 'http://localhost:8765/eureka'
-}
-
 class EurekaAPI {
+    
+    constructor (settings) {
+        log.info('settings', settings);
+        this.conf = settings;
+    }
+
     apps () {
         log.info('EurekaAPI: ls');
 
         const path = '/apps';
-        const apiUrl = new url.URL(conf.host + path);
+        const apiUrl = new url.URL(this.conf.host + path);
 
         return fetch(apiUrl, {
                 headers: { 'Accept': 'application/json' },
@@ -22,7 +24,7 @@ class EurekaAPI {
     }
     app (appId) {
         const path = `/apps/${appId}`;
-        const apiUrl = new url.URL(conf.host + path);
+        const apiUrl = new url.URL(this.conf.host + path);
 
         return fetch(apiUrl, {
                 headers: { 'Accept': 'application/json' },
@@ -32,7 +34,7 @@ class EurekaAPI {
     }
     appInstance (appId, instanceId) {
         const path = `/apps/${appId}/${instanceId}`;
-        const apiUrl = new url.URL(conf.host + path);
+        const apiUrl = new url.URL(this.conf.host + path);
 
         return fetch(apiUrl, {
                 headers: { 'Accept': 'application/json' },
@@ -42,7 +44,7 @@ class EurekaAPI {
     }
     instance (instanceId) {
         const path = `/instances/${instanceId}`;
-        const apiUrl = new url.URL(conf.host + path);
+        const apiUrl = new url.URL(this.conf.host + path);
 
         return fetch(apiUrl, {
                 headers: { 'Accept': 'application/json' },

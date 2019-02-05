@@ -3,12 +3,12 @@
 const program = require('commander');
 const api = require('../');
 
-function stringify (obj) {
-    return JSON.stringify(obj, null, 4);
-}
+const eureka = api.eureka({ 
+    host: 'http://localhost:8765/eureka'
+});
 
 // add example to help
-program.on('--help', function(){
+program.on('--help', function() {
     api.log.info('');
     api.log.info('Examples:');
     api.log.info('  $ eureka tunnel my-space -j myjumpserve.com -e eureka.myhost.com -ep 8761 -lp 1234 -p key.pem');
@@ -28,7 +28,7 @@ program
     .action((options) => {
         api.log.info('options', options.logLevel);
 
-        api.eureka.apps()
+        eureka.apps()
             .then((res) => {
                 let result = res.applications.application
                                 .sort(alphaASC);
@@ -70,7 +70,7 @@ program
     .action((appId, options) => {
         api.log.info('appId', appId);
 
-        api.eureka.app(appId)
+        eureka.app(appId)
             .then((res) => {
                 let result = res;
                 api.log.log(stringify(result));
@@ -87,7 +87,7 @@ program
         api.log.info('appId', appId);
         api.log.info('instanceId', instanceId);
         
-        api.eureka.appInstance(appId, instanceId)
+        eureka.appInstance(appId, instanceId)
             .then((res) => {
                 let result = res;
                 api.log.log(stringify(result));
@@ -103,7 +103,7 @@ program
     .action((instanceId) => {
         api.log.info('instanceId', instanceId);
         
-        api.eureka.instance(instanceId)
+        eureka.instance(instanceId)
             .then((res) => {
                 let result = res;
                 api.log.log(stringify(result));
@@ -157,6 +157,11 @@ program
     .parse(process.argv);
 
 
+
+function stringify (obj) {
+    return JSON.stringify(obj, null, 4);
+}
+    
 function alphaASC (a, b) {
     var nameA = a.name.toUpperCase(); // ignore upper and lowercase
     var nameB = b.name.toUpperCase(); // ignore upper and lowercase

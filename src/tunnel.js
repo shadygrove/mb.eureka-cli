@@ -1,10 +1,17 @@
 const spawn = require('child_process').spawn;
+const log = require('./log');
 
 let sshTerm; 
 
 module.exports = {
     openTunnel (jumpServer, eurekaServer, localPort, eurekaPort, pemFile) {
-        let envVariable = `-L ${localPort}:${eurekaServer}:${eurekaPort}`;
+        log.info('jumpServer', jumpServer);
+        log.info('eurekaServer', eurekaServer);
+        log.info('localPort', localPort);
+        log.info('eurekaPort', eurekaPort);
+        log.info('pemFile', pemFile);
+
+        let portForward = `-L ${localPort}:${eurekaServer}:${eurekaPort}`;
         sshTerm = spawn('ssh', [
             jumpServer,
           "-o UserKnownHostsFile=/dev/null",
@@ -12,7 +19,7 @@ module.exports = {
           "-N",
           "-i",
           pemFile,
-          envVariable
+          portForward
         ], {
           shell: true,
           detached: false

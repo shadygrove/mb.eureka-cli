@@ -4,7 +4,7 @@
 This is a CLI tool for interacting with a Eureka Service Registry
 
 Resources:  
-[Eureka API Docs](https://github.com/Netflix/eureka/wiki/Eureka-REST-operations)
+[Eureka API Docs](https://github.com/Netflix/eureka/wiki/Eureka-REST-operations)  
 [Netflix Eureka](https://github.com/Netflix/eureka)
 
 # Usage

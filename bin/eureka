@@ -29,12 +29,9 @@ program
         api.log.info('options', options.logLevel);
 
         api.eureka.apps()
-            .then((res) => { 
-                if (options.verbose) {
-                    api.log.log(stringify(res));
-                }
-
-                let result = res.applications.application;
+            .then((res) => {
+                let result = res.applications.application
+                                .sort(alphaASC);
 
                 switch (options.logLevel) {
                     case "medium": 
@@ -60,7 +57,56 @@ program
                 }
 
                 api.log.log(stringify(result));
-                
+            })
+            .catch((err) => {
+                api.log.error(err);
+            });
+    });
+
+program
+    .command('app <app-id>')
+    .description('Show app info')
+    .option('-l, --log-level <logLevel>', 'low (default), medium, high')
+    .action((appId, options) => {
+        api.log.info('appId', appId);
+
+        api.eureka.app(appId)
+            .then((res) => {
+                let result = res;
+                api.log.log(stringify(result));
+            })
+            .catch((err) => {
+                api.log.error(err);
+            });
+    });
+
+program
+    .command('app-instance <app-id> <instance-id>')
+    .description('Show instance info')
+    .action((appId, instanceId) => {
+        api.log.info('appId', appId);
+        api.log.info('instanceId', instanceId);
+        
+        api.eureka.appInstance(appId, instanceId)
+            .then((res) => {
+                let result = res;
+                api.log.log(stringify(result));
+            })
+            .catch((err) => {
+                api.log.error(err);
+            });
+    });
+
+program
+    .command('instance <instance-id>')
+    .description('Show instance info')
+    .action((instanceId) => {
+        api.log.info('instanceId', instanceId);
+        
+        api.eureka.instance(instanceId)
+            .then((res) => {
+                let result = res;
+                api.log.log(stringify(result));
             })
             .catch((err) => {
                 api.log.error(err);
@@ -109,3 +155,18 @@ program
 
 program
     .parse(process.argv);
+
+
+function alphaASC (a, b) {
+    var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+    var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+  
+    // names must be equal
+    return 0;
+};

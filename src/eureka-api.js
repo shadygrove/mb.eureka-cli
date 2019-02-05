@@ -6,12 +6,12 @@ const url = require('url');
 class EurekaAPI {
     
     constructor (settings) {
-        log.info('settings', settings);
+        log.debug('settings', JSON.stringify(settings));
         this.conf = settings;
     }
 
     apps () {
-        log.info('EurekaAPI: ls');
+        log.debug('EurekaAPI: ls');
 
         const path = '/apps';
         const apiUrl = new url.URL(this.conf.host + path);

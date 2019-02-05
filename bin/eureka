@@ -31,7 +31,7 @@ program
     .description('List app names')
     .option('-l, --log-level <logLevel>', 'low (default), medium, high')
     .action((options) => {
-        api.log.info('options', options.logLevel);
+        api.log.debug('options', options.logLevel);
 
         eureka.apps()
             .then((res) => {

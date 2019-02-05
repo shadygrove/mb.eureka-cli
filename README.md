@@ -19,7 +19,10 @@ eureka apps
 
 eureka apps APPLICATION-KEY
 
-
 ```
+
+## Debug Logging
+`export EUREKA_DEBUGS=true`  
+
 
 

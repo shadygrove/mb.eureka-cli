@@ -5,8 +5,16 @@ const error = chalk.bold.red;
 const warning = chalk.keyword('orange');
 const info = chalk.cyan;
 const log = chalk.default;
+const debug = chalk.magentaBright;
 
 module.exports = {
+    debug () {
+        let mapped = Object.keys(arguments).map((arg) => { return debug(arguments[arg]) });
+        
+        if (process.env.EUREKA_DEBUG) {
+            console.log.apply(this, mapped);
+        }
+    },
     log () {
         let mapped = Object.keys(arguments).map((arg) => { return log(arguments[arg]) });
         console.log.apply(this, mapped);

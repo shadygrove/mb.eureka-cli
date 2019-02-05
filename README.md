@@ -11,7 +11,7 @@ Resources:
 ```
 npm install -g mb.eureka-cli
 
-export EUREKA_SERVER=protocol.and.host.com
+export EUREKA_SERVER=http://localhost:8765/eureka  (assumes you are tunneled to Eureka and port forwarding 8765 to 8761)
 
 eureka --help
 

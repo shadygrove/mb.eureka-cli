@@ -3,8 +3,13 @@
 const program = require('commander');
 const api = require('../');
 
+if (!process.env.EUREKA_SERVER) {
+    api.log.warn('Please set environment variable, EUREKA_SERVER. (eg=> export EUREKA_SERVER=http://localhost:8765/eureka');
+    process.exit(1);
+}
+
 const eureka = api.eureka({ 
-    host: 'http://localhost:8765/eureka'
+    host: process.env.EUREKA_SERVER
 });
 
 // add example to help

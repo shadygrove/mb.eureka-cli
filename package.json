@@ -3,6 +3,9 @@
   "version": "1.0.7",
   "description": "",
   "main": "src/index.js",
+  "repository": {
+    "url": "https://github.com/shadygrove/node-gitlab-api"
+  },
   "bin": {
     "eureka": "bin/eureka"
   },
